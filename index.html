@@ -1,0 +1,99 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type='image/x-icon' href="/favicon.ico">
+    <meta name="description" content="Simple BioJS example" />
+
+    <!-- include MSA js + css -->
+    <!--    <script src="/js/dojo/dojo.js"></script> -->
+    <script src="/public/patric_msa_js/src/msa.js"></script>
+
+</head>
+
+<body>
+
+    <div id="menuDiv"></div>
+    <div id="yourDiv">Loading ... </div>
+
+    <script>
+        // this is a way how you use a bundled file parser
+        var msa = require("msa");
+            
+        var opts = {};
+
+        // set your custom properties
+        // @see: https://github.com/greenify/biojs-vis-msa/tree/master/src/g 
+        opts.el = document.getElementById("yourDiv");
+        opts.vis = {
+            conserv: false,
+            overviewbox: false,
+            seqlogo: true
+        };
+        opts.conf = {
+            dropImport: true
+        };
+        opts.zoomer = {
+            menuFontsize: "12px",
+            autoResize: true
+        };
+
+        // init msa
+        var m = new msa.msa(opts);
+
+        // search in URL for fasta or clustal
+        function getURLParameter(name) {
+            return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [, ""])[1].replace(/\+/g, '%20')) || null;
+        }
+
+        function importText(text){
+            var fileName, objs, ref, type;
+            ref = this.parseText(text), objs = ref[0], type = ref[1];
+            if (type === "error") {
+            return "error";
+            }
+            if (type === "seqs") {
+            this.msa.seqs.reset(objs);
+            this.msa.g.config.set("url", "userimport");
+            this.msa.g.trigger("url:userImport");
+            } else if (type === "features") {
+            this.msa.seqs.addFeatures(objs);
+            } else if (type === "newick") {
+            this.msa.u.tree.loadTree((function(_this) {
+                return function() {
+                return _this.msa.u.tree.showTree(file);
+                };
+            })(this));
+            }
+            return
+        }
+
+        var defaultURL = "https://cdn.rawgit.com/greenify/msa/master/snippets/data/fer1.clustal";
+        //var defaultURL = "https://cdn.rawgit.com/greenify/msa/master/snippets/data/tree/B2014122194A560KL7I.4.ids.fa";
+        var url = getURLParameter('seq') || defaultURL;
+
+        //m.u.file.importURL(url, renderMSA);
+        var test="CLUSTAL\nSalmonella_enterica_subsp._enterica_serovar_Choleraesuis_str._SC-B67\t---MSSPGNPGKTSDGRHTEVGSFNYSRA--ADRSNSENVLSSGMTQS--\nSalmonella_enterica_subsp._enterica_serovar_Paratyphi_C_strain_RKS4594\t---MSSPGNPGKTSDGRHTEVGSFNYSRA--ADRSNSENVLSSGMTQS--\n Acinetobacter_baumannii_2887\tMLVAQQLGQWAEQTALKLLKEQNYEWVASNYHSRRGEVDLIENAVTN---\nPrevotella_oris_JCM_12252\t---MKERAIWDDLRFDLISIVGT--------APENFKLEHIVDAFNPLLV\nMethylobacterium_extorquens_DSM_13060\t--MSRAARAWLARHPLAADATLRADAVFV--APRRWP-RHLPNAFEIEGL"
+        //m.u.file.parseText(test, renderMSA);
+        
+        //importText.bind(this.m.u.file)(test);
+        this.m.u.file.importFile(test);
+        renderMSA();
+        function renderMSA() {
+
+            // the menu is independent to the MSA container
+            var menuOpts = {};
+            menuOpts.el = document.getElementById('div');
+            menuOpts.msa = m;
+            var defMenu = new msa.menu.defaultmenu(menuOpts);
+            m.addView("menu", defMenu);
+
+            // call render at the end to display the whole MSA
+            m.render();
+        }
+    </script>
+
+</body>
+
+</html>
+
