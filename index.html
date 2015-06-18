@@ -144,7 +144,7 @@
         var treeDiv2=document.getElementsByClassName("tnt_groupDiv");
         var treeHeight=parseInt(treeDiv2[0].childNodes[0].getAttribute("height"));
         var msaDiv=document.getElementById("msaDiv");
-        msaDiv.style.height=(treeHeight+90).toString()+"px";
+        msaDiv.style.height=(treeHeight+105).toString()+"px";
         }, 1000);
     }
 
@@ -173,7 +173,7 @@
     msaDiv.style.overflowX="scroll";
     msaDiv.style.overflowY="hidden";
     msaDiv.style.verticalAlign="bottom";
-    msaDiv.style.height=(treeHeight+90).toString()+"px";
+    msaDiv.style.height=(treeHeight+105).toString()+"px";
     treeLoaded=true;
     m.g.seqs.models.forEach( function(mdl){
         if(mdl.attributes.hidden){
